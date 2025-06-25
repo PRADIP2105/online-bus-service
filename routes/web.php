@@ -1,15 +1,18 @@
 <?php
 
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\NotificationController;
 use App\Livewire\SearchSchedules;
+use App\Livewire\CreateBooking;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('/schedules', SearchSchedules::class)->name('schedules.index');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('/login');
@@ -29,10 +32,11 @@ Route::middleware('auth')->group(function () {
     })->middleware('role:Admin')->name('admin.dashboard');
 
     Route::get('/bookings', function () {
-        return 'My Bookings';
+        return view('bookings.index');
     })->name('bookings.index');
 
-    Route::get('/bookings/create/{schedule}', function ($schedule) {
-        return 'Book Schedule ' . $schedule;
-    })->name('bookings.create');
+    Route::get('/bookings/create/{schedule}', CreateBooking::class)->name('bookings.create');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
 });
