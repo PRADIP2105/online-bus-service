@@ -4,40 +4,34 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Schedule;
-use Illuminate\Support\Carbon;
 
 class SearchSchedules extends Component
 {
     public $source = '';
     public $destination = '';
-    public $date = '';
-    public $schedules;
-
-    public function mount()
-    {
-        $this->date = Carbon::today()->format('Y-m-d');
-        $this->search();
-    }
+    public $departure_date = '';
 
     public function search()
     {
-        $query = Schedule::query()
-            ->where('departure_time', '>=', Carbon::parse($this->date)->startOfDay())
-            ->where('departure_time', '<=', Carbon::parse($this->date)->endOfDay());
+        $query = Schedule::query()->with('bus');
 
         if ($this->source) {
             $query->where('source', 'like', '%' . $this->source . '%');
         }
-
         if ($this->destination) {
             $query->where('destination', 'like', '%' . $this->destination . '%');
         }
+        if ($this->departure_date) {
+            $query->whereDate('departure_time', $this->departure_date);
+        }
 
-        $this->schedules = $query->with('bus')->get();
+        return $query->get();
     }
 
     public function render()
     {
-        return view('livewire.search-schedules');
+        return view('livewire.search-schedules', [
+            'schedules' => $this->search(),
+        ])->layout('layouts.app');
     }
 }
