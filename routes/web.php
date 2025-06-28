@@ -30,27 +30,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/schedules', SearchSchedules::class)->name('schedules.index');
     Route::get('/reviews/{bus}', CreateReview::class)->name('reviews.index');
 
-    Route::middleware('role:Admin|Operator')->group(function () {
-        Route::get('/admin/schedules', [ScheduleController::class, 'index'])->name('schedules.manage');
-        Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
-        Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
-        Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
-        Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
-        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
-    });
+    Route::get('/admin/schedules', [ScheduleController::class, 'index'])->name('schedules.manage');
+    Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+    Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
+    Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+    Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
-    Route::middleware('role:Operator')->group(function () {
-        Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
-        Route::get('/buses/create', [BusController::class, 'create'])->name('buses.create');
-        Route::post('/buses', [BusController::class, 'store'])->name('buses.store');
-        Route::get('/buses/{bus}/edit', [BusController::class, 'edit'])->name('buses.edit');
-        Route::put('/buses/{bus}', [BusController::class, 'update'])->name('buses.update');
-        Route::delete('/buses/{bus}', [BusController::class, 'destroy'])->name('buses.destroy');
-    });
+    Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
+    Route::get('/buses/create', [BusController::class, 'create'])->name('buses.create');
+    Route::post('/buses', [BusController::class, 'store'])->name('buses.store');
+    Route::get('/buses/{bus}/edit', [BusController::class, 'edit'])->name('buses.edit');
+    Route::put('/buses/{bus}', [BusController::class, 'update'])->name('buses.update');
+    Route::delete('/buses/{bus}', [BusController::class, 'destroy'])->name('buses.destroy');
 
     Route::get('/admin', function () {
         return 'Admin Dashboard';
-    })->middleware('role:Admin')->name('admin.dashboard');
+    })->name('admin.dashboard');
 
     Route::get('/bookings', function () {
         return view('bookings.index');

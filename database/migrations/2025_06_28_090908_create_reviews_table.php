@@ -8,21 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('bus_id')->constrained()->onDelete('cascade');
-            $table->string('source');
-            $table->string('destination');
-            $table->dateTime('departure_time');
-            $table->dateTime('arrival_time');
-            $table->decimal('price', 8, 2);
-            $table->integer('available_seats');
+            $table->integer('rating')->unsigned()->min(1)->max(5);
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('reviews');
     }
 };

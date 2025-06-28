@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('schedule_id')->constrained()->onDelete('cascade');
             $table->integer('seat_number');
-            $table->decimal('total_price', 8, 2);
             $table->string('status')->default('confirmed');
             $table->timestamps();
         });

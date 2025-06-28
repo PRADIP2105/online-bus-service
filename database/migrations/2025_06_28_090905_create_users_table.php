@@ -8,19 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('buses', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('operator_id')->constrained('users')->onDelete('cascade');
-            $table->integer('capacity');
-            $table->string('image_path')->nullable();
-            $table->string('type')->default('Non-AC');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('buses');
+        Schema::dropIfExists('users');
     }
 };
