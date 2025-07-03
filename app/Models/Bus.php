@@ -9,20 +9,15 @@ class Bus extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'operator_id', 'capacity', 'type'];
-
-    public function operator()
-    {
-        return $this->belongsTo(User::class, 'operator_id');
-    }
+    protected $fillable = [
+        'name',
+        'operator_id',
+        'capacity',
+        'type',
+    ];
 
     public function schedules()
     {
         return $this->hasMany(Schedule::class);
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
     }
 }

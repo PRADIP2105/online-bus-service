@@ -10,7 +10,7 @@ class BusController extends Controller
 {
     public function index()
     {
-        $buses = Bus::where('operator_id', Auth::id())->with('reviews')->get();
+        $buses = Bus::where('operator_id', Auth::id())->get();
         return view('buses.index', compact('buses'));
     }
 
@@ -21,49 +21,47 @@ class BusController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
             'capacity' => 'required|integer|min:1',
+            'type' => 'required|in:AC,Non-AC',
         ]);
 
-        Bus::create([
-            'name' => $request->name,
-            'type' => $request->type,
-            'capacity' => $request->capacity,
-            'operator_id' => Auth::id(),
-        ]);
+        Bus::create(array_merge($validated, ['operator_id' => Auth::id()]));
 
         return redirect()->route('buses.index')->with('success', 'Bus created successfully.');
     }
 
     public function edit(Bus $bus)
     {
-        $this->authorize('update', $bus);
+        if ($bus->operator_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
         return view('buses.edit', compact('bus'));
     }
 
     public function update(Request $request, Bus $bus)
     {
-        $this->authorize('update', $bus);
-        $request->validate([
+        if ($bus->operator_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|string|max:50',
             'capacity' => 'required|integer|min:1',
+            'type' => 'required|in:AC,Non-AC',
         ]);
 
-        $bus->update([
-            'name' => $request->name,
-            'type' => $request->type,
-            'capacity' => $request->capacity,
-        ]);
+        $bus->update($validated);
 
         return redirect()->route('buses.index')->with('success', 'Bus updated successfully.');
     }
 
     public function destroy(Bus $bus)
     {
-        $this->authorize('delete', $bus);
+        if ($bus->operator_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
         $bus->delete();
         return redirect()->route('buses.index')->with('success', 'Bus deleted successfully.');
     }

@@ -1,64 +1,73 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Schedule') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route('schedules.update', $schedule->id) }}">
-                        @csrf
-                        @method('PUT')
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="bus_id" class="block text-sm font-medium text-gray-700">Bus</label>
-                                <select id="bus_id" name="bus_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    @foreach ($buses as $bus)
-                                        <option value="{{ $bus->id }}" {{ $bus->id == $schedule->bus_id ? 'selected' : '' }}>{{ $bus->name }} ({{ $bus->type }})</option>
-                                    @endforeach
-                                </select>
-                                @error('bus_id') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="source" class="block text-sm font-medium text-gray-700">Source</label>
-                                <input type="text" name="source" id="source" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="{{ old('source', $schedule->source) }}">
-                                @error('source') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="destination" class="block text-sm font-medium text-gray-700">Destination</label>
-                                <input type="text" name="destination" id="destination" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="{{ old('destination', $schedule->destination) }}">
-                                @error('destination') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="departure_time" class="block text-sm font-medium text-gray-700">Departure Time</label>
-                                <input type="datetime-local" name="departure_time" id="departure_time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="{{ old('departure_time', $schedule->departure_time->format('Y-m-d\TH:i')) }}">
-                                @error('departure_time') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="arrival_time" class="block text-sm font-medium text-gray-700">Arrival Time</label>
-                                <input type="datetime-local" name="arrival_time" id="arrival_time" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="{{ old('arrival_time', $schedule->arrival_time->format('Y-m-d\TH:i')) }}">
-                                @error('arrival_time') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-                                <input type="number" name="price" id="price" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="{{ old('price', $schedule->price) }}">
-                                @error('price') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="available_seats" class="block text-sm font-medium text-gray-700">Available Seats</label>
-                                <input type="number" name="available_seats" id="available_seats" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="{{ old('available_seats', $schedule->available_seats) }}">
-                                @error('available_seats') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Update Schedule</button>
-                        </div>
-                    </form>
-                </div>
+@section('content')
+    <div class="container">
+        <h1>Edit Schedule</h1>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-        </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+        <form action="{{ route('schedules.update', $schedule) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="mb-3">
+                <label for="bus_id" class="form-label">Bus</label>
+                <select name="bus_id" id="bus_id" class="form-control">
+                    <option value="">Select a bus</option>
+                    @foreach ($buses as $bus)
+                        <option value="{{ $bus->id }}" {{ $bus->id == $schedule->bus_id ? 'selected' : '' }}>{{ $bus->name }}</option>
+                    @endforeach
+                </select>
+                @error('bus_id')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="start_location" class="form-label">Start Location</label>
+                <input type="text" name="start_location" id="start_location" class="form-control" value="{{ old('start_location', $schedule->start_location) }}" required>
+                @error('start_location')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="end_location" class="form-label">End Location</label>
+                <input type="text" name="end_location" id="end_location" class="form-control" value="{{ old('end_location', $schedule->end_location) }}" required>
+                @error('end_location')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="departure_time" class="form-label">Departure Time</label>
+                <input type="datetime-local" name="departure_time" id="departure_time" class="form-control" value="{{ old('departure_time', $schedule->departure_time->format('Y-m-d\TH:i')) }}" required>
+                @error('departure_time')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="arrival_time" class="form-label">Arrival Time</label>
+                <input type="datetime-local" name="arrival_time" id="arrival_time" class="form-control" value="{{ old('arrival_time', $schedule->arrival_time->format('Y-m-d\TH:i')) }}" required>
+                @error('arrival_time')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" name="price" id="price" class="form-control" value="{{ old('price', $schedule->price) }}" step="0.01" required>
+                @error('price')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <button type="submit" class="btn btn-primary">Update Schedule</button>
+        </form>
     </div>
-</x-app-layout>
+@endsection

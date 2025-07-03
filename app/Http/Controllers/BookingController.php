@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationController extends Controller
+class BookingController extends Controller
 {
     public function index()
     {
-        return view('notifications.index');
+        return view('bookings.index');
     }
 }

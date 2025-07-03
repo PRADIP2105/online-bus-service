@@ -1,43 +1,49 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manage Buses') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    @if (session('success'))
-                        <div class="mb-4 text-green-600">{{ session('success') }}</div>
-                    @endif
-                    <a href="{{ route('buses.create') }}" class="mb-4 inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Add New Bus</a>
-                    @if ($buses->isEmpty())
-                        <p class="text-gray-500">No buses found.</p>
-                    @else
-                        <div class="grid grid-cols-1 gap-4">
-                            @foreach ($buses as $bus)
-                                <div class="border p-4 rounded-md">
-                                    <p><strong>Name:</strong> {{ $bus->name }}</p>
-                                    <p><strong>Type:</strong> {{ $bus->type }}</p>
-                                    <p><strong>Capacity:</strong> {{ $bus->capacity }} seats</p>
-                                    <p><strong>Average Rating:</strong> {{ $bus->reviews->avg('rating') ?: 'N/A' }}</p>
-                                    <div class="mt-2">
-                                        <a href="{{ route('buses.edit', $bus) }}" class="text-blue-500 hover:underline">Edit</a>
-                                        <form action="{{ route('buses.destroy', $bus) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('Are you sure?')">Delete</button>
-                                        </form>
-                                        <a href="{{ route('reviews.index', ['bus' => $bus->id]) }}" class="text-blue-500 hover:underline">View Reviews</a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+@section('content')
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Manage Buses</h1>
+        <a href="{{ route('buses.create') }}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-6">Add New Bus</a>
+        @if (session('success'))
+            <div class="bg-green-50 border-l-4 border-green-400 text-green-700 p-4 mb-6" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 mb-6" role="alert">
+                {{ session('error') }}
+            </div>
+        @endif
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($buses as $bus)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $bus->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $bus->capacity }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $bus->type }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <a href="{{ route('buses.edit', $bus) }}" class="inline-flex justify-center py-1 px-3 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Edit</a>
+                                    <form action="{{ route('buses.destroy', $bus) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex justify-center py-1 px-3 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700" onclick="return confirm('Are you sure?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

@@ -1,48 +1,37 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    @if (session('success'))
-                        <div class="mb-4 text-green-600">{{ session('success') }}</div>
-                    @endif
-                    <form method="POST" action="{{ route('profile.update') }}">
-                        @csrf
-                        @method('PATCH')
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                                <input id="name" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" type="text" name="name" value="{{ old('name', auth()->user()->name) }}" required autofocus />
-                                @error('name') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                <input id="email" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" type="email" name="email" value="{{ old('email', auth()->user()->email) }}" required />
-                                @error('email') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="password" class="block text-sm font-medium text-gray-700">New Password</label>
-                                <input id="password" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" type="password" name="password" />
-                                @error('password') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                                <input id="password_confirmation" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" type="password" name="password_confirmation" />
-                                @error('password_confirmation') <span class="text-red-500">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Update Profile</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+   @section('content')
+       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+           <h1 class="text-2xl font-bold text-gray-900 mb-6">Profile</h1>
+           <div class="bg-white shadow sm:rounded-lg p-6">
+               <form method="POST" action="{{ route('profile.update') }}">
+                   @csrf
+                   @method('PATCH')
+                   <div class="space-y-6">
+                       <div>
+                           <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                           <input type="text" name="name" id="name" value="{{ old('name', Auth::user()->name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                           @error('name')
+                               <span class="text-red-600 text-sm">{{ $message }}</span>
+                           @enderror
+                       </div>
+                       <div>
+                           <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                           <input type="email" name="email" id="email" value="{{ old('email', Auth::user()->email) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                           @error('email')
+                               <span class="text-red-600 text-sm">{{ $message }}</span>
+                           @enderror
+                       </div>
+                       <div>
+                           <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Update Profile</button>
+                       </div>
+                   </div>
+               </form>
+               <form method="POST" action="{{ route('profile.destroy') }}" class="mt-6">
+                   @csrf
+                   @method('DELETE')
+                   <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700" onclick="return confirm('Are you sure?')">Delete Account</button>
+               </form>
+           </div>
+       </div>
+   @endsection

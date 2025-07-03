@@ -10,24 +10,11 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
+        if (!Auth::check() || !in_array(Auth::user()->role_id, array_map('intval', explode('|', implode('|', $roles))))) 
+        {
+            // abort(403, 'Unauthorized action.')
         }
 
-        $user = Auth::user();
-
-        foreach ($roles as $role) {
-            if ($role === 'Admin' && $user->isAdmin()) {
-                return $next($request);
-            }
-            if ($role === 'Operator' && $user->isOperator()) {
-                return $next($request);
-            }
-            if ($role === 'Passenger' && $user->isPassenger()) {
-                return $next($request);
-            }
-        }
-
-        abort(403, 'Unauthorized action.');
+        return $next($request);
     }
 }
